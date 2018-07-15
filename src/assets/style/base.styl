@@ -1,0 +1,71 @@
+$textColor = #9584ff
+
+bGradient(color1, color2, $deg)
+    background-image: linear-gradient($deg, color1 0%, color2 100%)
+$bg-image($url)
+    background-image: url($url + "@2x.png")
+    @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3)
+        background-image: url($url + "@3x.png")
+
+btn-bg()
+  margin auto
+  text-align center
+  padding 22px 0
+  margin-top 15px
+  background #8294ff
+  color #ffffff
+  border-radius 10px
+  position relative
+  overflow hidden
+  span 
+      position relative
+      z-index 2
+  &:after
+      position absolute
+      content ""
+      width 100px
+      height 100px
+      background-color #5572e4
+      opacity .5
+      border-radius 50%
+      bottom 0%
+      left 0
+      transform: translate(-50%, 60%)
+  &:before
+      position absolute
+      content ""
+      width 200px
+      height 200px
+      background-color #82baff
+      border-radius 50%
+      left 0
+      top 0
+      transform: translate(-50%, -80%)
+
+// 不换行
+no-wrap()
+  text-overflow: ellipsis
+  overflow: hidden
+  white-space: nowrap
+
+// 扩展点击区域
+extend-click()
+  position: relative
+  &:before
+    content: ''
+    position: absolute
+    top: -10px
+    left: -10px
+    right: -10px
+    bottom: -10px
+    
+border-1px($color, $direction)
+  // position: relative
+  &:after
+    display: block
+    position: absolute
+    left: 0
+    bottom: 0
+    width: 100%
+    border-$direction: 1px solid $color
+    content: ' '
