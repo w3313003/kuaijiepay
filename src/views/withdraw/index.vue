@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="swiperWrap">
-            <Swipe 
+            <Swipe
                 :payType="payType"
                 :channeList="channeList"
                 :initSlideIndex="initSlideIndex"
@@ -51,11 +51,11 @@
 
 <script lang="ts">
 import { Vue, Component} from "vue-property-decorator";
-// const { Swiper, SwiperSlide } =  require('vue-awesome-swiper');
 import Swipe from "@/components/Swiper.vue";
 import {
   State,
 } from 'vuex-class'
+import { setTimeout } from 'timers';
 
 @Component({
     components: {
@@ -110,6 +110,9 @@ export default class extends Vue {
                 return;
             }
             this.amountArr.push(value);
+            setTimeout(() => {
+                this.touchendHandler()
+            }, 300)
         }
     }
     private touchendHandler() {
@@ -124,6 +127,8 @@ export default class extends Vue {
     }
     private toDetail(index: number) {
         const payType = (this.channeList[index] as any).pay_type;
+        if(payType !== this.payType) return;
+        console.log(this.payType, payType);
         this.$router.push({
             path: `/channelList`,
         })

@@ -60,13 +60,21 @@
     </div>
 </template>
 
-<script>
+<script >
 import { Component, Vue } from 'vue-property-decorator';
 import { Flip } from 'number-flip';
 import { setTimeout } from 'timers';
+import { mapState } from 'vuex';
 
-@Component
+@Component({
+    computed:{
+        ...mapState(['isLogin'])
+    }
+})
 export default class Home extends Vue {
+    created() {
+        console.log(this.isLogin);
+    }
     amount = 43432;
     mounted() {
         this.$nextTick(() => {

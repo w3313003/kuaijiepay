@@ -6,7 +6,7 @@
 */
 import axios, { AxiosPromise } from "axios";
 import { Toast } from "vant";
-const BASE_URL = "http://192.168.1.106:3000";
+const BASE_URL = "http://localhost:3000";
 
 axios.defaults.baseURL = BASE_URL;
 
@@ -14,7 +14,7 @@ axios.interceptors.request.use(
     (config: any) => {
         Toast.loading({
             mask: true,
-            message: "加载中"
+            message: '加载中...'
         });
         // config.headers["Authorization"] = "zj";
         return config;
@@ -25,7 +25,7 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-  (res: any) => {
+    (res: any) => {
         Toast.clear();
         if (res.data.code !== 200) {
             Toast({

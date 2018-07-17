@@ -1,9 +1,16 @@
 const tsImportPluginFactory = require("ts-import-plugin");
-
+const path = require("path");
+const assetsPath = function (_path) {
+    var assetsSubDirectory = process.env.NODE_ENV === 'production' ?
+        config.build.assetsSubDirectory :
+        config.dev.assetsSubDirectory
+    return path.posix.join(assetsSubDirectory, _path)
+}
 module.exports = {
     chainWebpack: config => {
         config.module
             .rule("ts")
+            .test(/\.(ts|tsx)$/)
             .use("ts-loader")
             .loader("ts-loader")
             .options({
@@ -22,6 +29,7 @@ module.exports = {
                 }
             });
     },
-
-}
-
+    configureWebpack: config => {
+       
+    }
+};

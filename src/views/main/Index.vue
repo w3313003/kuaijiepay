@@ -7,7 +7,7 @@
                 </div>
                 首页
             </router-link>
-            <router-link to="/about" class="item">
+            <router-link to="/team" class="item">
                 <div class="icon">
                 </div>
                 团队
@@ -17,12 +17,12 @@
                      <img src="../../assets/img/withdraw.png" alt="">
                  </div>
             </router-link>
-            <router-link to="/about" class="item">
+            <router-link :to="{ path: '/message'}" class="item">
                 <div class="icon">
                 </div>
                 消息
             </router-link>
-            <router-link to="/about" class="item">
+            <router-link to="/my" class="item">
                 <div class="icon">
                 </div>
                 我的
@@ -36,6 +36,7 @@ import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class Home extends Vue {
+    name: string = "213"
 }
 </script>
 
@@ -85,6 +86,10 @@ export default class Home extends Vue {
                 height 19px
                 background url("../../assets/img/message.png")
                 background-size cover
+            &.router-link-active
+                div.icon
+                    background url("../../assets/img/message_active.png")
+                    background-size cover
         &:nth-child(5)
             div.icon
                 width 17.5px

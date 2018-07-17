@@ -1,7 +1,7 @@
 <template>
     <div class="auth-wrap">
         <div class="step">
-            <div :class="{'active' : index < 2}" class="item" v-for="(item, index) in step" :key="item">
+            <div :class="{'active' : index <= stepNumber}" class="item" v-for="(item, index) in step" :key="item">
                 <div class="icons"></div>
                 <div class="text">
                     {{item}}
@@ -77,7 +77,7 @@
                             开户地址：
                         </div>
                         <div class="input-wrap">
-                            <div class="selectwrap" >
+                            <div class="selectwrap" @click="showAreaPicker = true">
                                 <span class="banktip">点击选择开户地址</span>
                                 <img src="../../assets/img/select.png" alt="">
                             </div>
@@ -89,6 +89,45 @@
                 <div class="step_1">
                     <div class="title">
                         证件上传
+                    </div>
+                    <div class="id_content">
+                        <div class="item">
+                            <div>
+                                <img src="../../assets/img/idcrad1.png" alt="" class="bg">
+                                <img src="../../assets/img/camera.png" class="camera" alt="">
+                            </div>
+                            <p class="desc">
+                                身份证正面照片
+                            </p>
+                        </div>
+                        <div class="item" >
+                            <div v-if="idCard2">
+                                <img class="bg selected" :src="idCard2" alt="" >
+                                <svg @click="clearImg(2)" class="icon" aria-hidden="true">
+                                    <use xlink:href="#icon-lhq-close"></use>
+                                </svg>
+                            </div>
+                            <div v-else>
+                                <img src="../../assets/img/idcrad1.png" alt="" class="bg">
+                                <div class="camera" >
+                                    <Uploader :after-read="onRead" accept="image/*">
+                                        <img src="../../assets/img/camera.png" alt="">
+                                    </Uploader>
+                                </div>
+                            </div>
+                            <p class="desc">
+                                身份证反面照片
+                            </p>
+                        </div>
+                        <div class="item">
+                            <div>
+                                <img src="../../assets/img/idcrad1.png" alt="" class="bg">
+                                <img src="../../assets/img/camera.png" class="camera" alt="">
+                            </div>
+                            <p class="desc">
+                                同时手持身份证和银行卡照片
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,21 +143,43 @@
                 title="选择开户银行"
                 :columns="bankList"
                 @confirm="selectBank"
+                @cancel="showBankPicker = false"
             />
         </Popup>
+        <Popup v-model="showAreaPicker" position="bottom">
+            <Area
+                show-toolbar
+                title="选择地区"
+                :area-list="area"
+                @confirm="selectArea"
+                @cancel="showAreaPicker = false"
+            />
+        </Popup>
+        <Check-status 
+            v-if="false"
+            :status="status"
+        />
     </div>
 </template>
 
 <script lang="ts">
-import { Popup, Picker } from "vant";
+import { Popup, Picker, Area, Uploader } from "vant";
+import CheckStatus from "@/components/auth_status.vue";
+import area from "../../common//area";
+import api from "@/api";
+import { setTimeout } from 'timers';
 export default {
     components: {
         Popup, 
-        Picker
+        Picker,
+        Area,
+        Uploader,
+        CheckStatus
     },
     data() {
         return {
             step: ["填写信息", "上传证件", "等待审核", "实名成功"],
+            area: area,
             bankList: [
                 {
                     text: "平安银行",
@@ -133,15 +194,36 @@ export default {
                     value: 3
                 }
             ],
-            stepNumber: 0,
-            showBankPicker: false
+            stepNumber: 1,
+            showBankPicker: false,
+            showAreaPicker: false,
+            idCard1: "",
+            idCard2: "",
+            idCard3: "",
+            status: 1
         }
     },
     methods: {
-        selectBank() {
-            console.log(arguments);
+        selectBank(value: any, index: number) {
             this.showBankPicker = false;
-        }
+        },
+        selectArea(columnsNum: any) {
+            console.log(columnsNum);
+            this.showAreaPicker = false;
+        },
+        onRead(file: any) {
+            console.log(file);
+            const formData = new FormData();
+                formData.append("file", file, "files");
+            api.post("/", formData).then(res => {
+                console.log(res);
+            })
+            this.idCard2 = file.content;
+        },
+        clearImg(index: number) {
+            const key = `idCard${index}`;
+            (this as any)[key] = "";
+        },
     }
 }
 
@@ -188,17 +270,17 @@ export default {
             align-items center
             padding 20px 0
             font-size 14px
-            &:after
+            &:before
                 content ""
                 position absolute
                 width 100%
                 height 2px 
-                right 0
+                left 0
                 top 32px
-                transform translateX(90%)
+                transform translateX(-90%)
                 background-color #fff
-            &:last-child
-                &:after
+            &:first-child
+                &:before
                     width 0
                     height 0
             .icons
@@ -222,7 +304,7 @@ export default {
                     transform translate(-50%,-50%)
             &.active
                 color #7246ff
-                &:after
+                &:before
                     background #7246ff
                 .icons
                     background #7246ff
@@ -252,6 +334,45 @@ export default {
         .idWrap
             border-radius 10px
             box-shadow 0 0 10px #ababab
+            padding 0 12px
+            margin 5px 0 15px
+            .id_content
+                padding 15px 0
+                .item
+                    width 200px
+                    margin auto
+                    position relative
+                    margin-bottom 15px
+                    svg.icon
+                        position absolute
+                        right 0
+                        top 0
+                        transform translate(50%, -50%)
+                        color #eb5555
+                    img.bg
+                        width 100%
+                        height 120px
+                        display block
+                        &.selected
+                            border-radius 10px
+                            box-shadow 0 0 5px #7e67fb;
+                    .camera
+                        width 55px
+                        height 55px
+                        position absolute
+                        left 50%
+                        top 0
+                        transform translate(-50%, 30px)
+                        overflow hidden
+                        img
+                            width 100%
+                            height 100%
+                    .desc
+                        text-align center
+                        margin 0
+                        font-size 14px
+                        margin-top 5px 
+                
         // 基本信息
         .infoWrap
             .tips
@@ -281,6 +402,7 @@ export default {
                 border-radius 10px
                 box-shadow 0 0 10px #ccc9c9
                 margin-top 25px
+                margin-bottom 25px
                 .filed
                     padding 12px 0
                     display flex
@@ -300,7 +422,6 @@ export default {
                             outline none
                         input::placeholder
                             color #a7a7a7
-                            font-size 16px
                         .selectwrap
                             display flex
                             justify-content space-between
@@ -308,6 +429,7 @@ export default {
                             img
                                 width 16px
                                 height 8px
+                                
 @media screen and (max-width: 320px)
     .item
         &:after
